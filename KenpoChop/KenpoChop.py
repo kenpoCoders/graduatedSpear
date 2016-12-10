@@ -16,7 +16,7 @@ WIDTH = 480
 HEIGHT = 640
 FPS = 60
 TITLE = "Kenpo Chop"
-BGCOLOR = BLACK
+BGCOLOR = GREEN
 
 ############ SPRITES  ############
 class Player(pygame.sprite.Sprite):
@@ -24,7 +24,6 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(player_image,(50,50))
-        self.image.set_colorkey(RED)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -79,8 +78,7 @@ class Pad(pygame.sprite.Sprite):
 class Chop(pygame.sprite.Sprite):
     def __init__(self, x, y, t):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10, 20))
-        self.image.fill(YELLOW)
+        self.image = pygame.transform.scale(wheel_kick_image,(30,30))
         self.rect = self.image.get_rect()
         self.rect.bottom = t
         self.rect.centerx = x
@@ -99,6 +97,7 @@ pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 
 player_image = pygame.image.load(path.join(img_dir, 'playerBoy1.png')).convert_alpha()
+wheel_kick_image = pygame.image.load(path.join(img_dir, 'wheelKick.png')).convert_alpha()
 
 # set up new game
 all_sprites = pygame.sprite.Group()
