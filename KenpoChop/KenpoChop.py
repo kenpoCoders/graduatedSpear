@@ -10,7 +10,7 @@ YELLOW = (255, 255, 0)
 
 # Settings
 WIDTH = 480
-HEIGHT = 600
+HEIGHT = 640
 FPS = 60
 TITLE = "Kenpo Chop"
 BGCOLOR = BLACK
@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
     # player sprite - moves left/right, shoots
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50, 40))
+        self.image = pygame.Surface((50, 50))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
