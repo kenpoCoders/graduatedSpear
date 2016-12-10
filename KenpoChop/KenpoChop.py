@@ -1,5 +1,8 @@
 import pygame
 import random
+from os import path
+
+img_dir = path.join(path.dirname(__file__),'img')
 
 # Colors (R, G, B)
 WHITE = (255, 255, 255)
@@ -20,8 +23,8 @@ class Player(pygame.sprite.Sprite):
     # player sprite - moves left/right, shoots
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50, 50))
-        self.image.fill(GREEN)
+        self.image = pygame.transform.scale(player_image,(50,50))
+        self.image.set_colorkey(RED)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -94,6 +97,8 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
+
+player_image = pygame.image.load(path.join(img_dir, 'playerBoy1.png')).convert_alpha()
 
 # set up new game
 all_sprites = pygame.sprite.Group()
