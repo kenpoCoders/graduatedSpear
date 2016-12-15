@@ -14,6 +14,7 @@ YELLOW = (255, 255, 0)
 # Settings
 WIDTH = 480
 HEIGHT = 640
+SIDEPAD = 20
 FPS = 60
 TITLE = "Kenpo Chop"
 BGCOLOR = GREEN
@@ -23,7 +24,7 @@ class Player(pygame.sprite.Sprite):
     # player sprite - moves left/right, shoots
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(player_image,(50,50))
+        self.image = pygame.transform.scale(player_image,(50,100))
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -40,10 +41,10 @@ class Player(pygame.sprite.Sprite):
         # move the sprite
         self.rect.x += self.speedx
         # stop at the edges
-        if self.rect.right > WIDTH:
-            self.rect.right = WIDTH
-        if self.rect.left < 0:
-            self.rect.left = 0
+        if self.rect.right > (WIDTH - SIDEPAD):
+            self.rect.right = (WIDTH - SIDEPAD)
+        if self.rect.left < (SIDEPAD):
+            self.rect.left = SIDEPAD
 
     def chop(self):
       chop = Chop(self.rect.centerx,self.rect.centery,self.rect.top)
@@ -55,10 +56,9 @@ class Pad(pygame.sprite.Sprite):
     # Kenpo Pad sprite - spawns above top and moves downward
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((30, 40))
-        self.image.fill(RED)
+        self.image = pygame.transform.scale(badguy_image,(50,100))
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.x = random.randrange(SIDEPAD, (WIDTH - SIDEPAD) - self.rect.width)
         self.rect.y = random.randrange(-80, -50)
         self.speedy = random.randrange(1, 6)
 
@@ -66,7 +66,7 @@ class Pad(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         if self.rect.top > HEIGHT + 10 or self.rect.y < -80:
             self.rect.y = random.randrange(-80, -50)
-            self.rect.x = random.randrange(WIDTH - self.rect.width)
+            self.rect.x = random.randrange(SIDEPAD, (WIDTH - SIDEPAD) - self.rect.width)
             self.speedy = random.randrange(1, 6)
 
     def hit(self):
@@ -97,7 +97,10 @@ pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 
 player_image = pygame.image.load(path.join(img_dir, 'playerBoy1.png')).convert_alpha()
+badguy_image = pygame.image.load(path.join(img_dir, 'kenpoPlayerRectangle.png')).convert_alpha()
 wheel_kick_image = pygame.image.load(path.join(img_dir, 'wheelKick.png')).convert_alpha()
+dojo_image = pygame.image.load(path.join(img_dir, 'dojoFloorTextured.png')).convert_alpha()
+dojo_rect = dojo_image.get_rect()
 
 # set up new game
 all_sprites = pygame.sprite.Group()
@@ -137,6 +140,7 @@ while running:
 
     ##### Draw/update screen #########
     screen.fill(BGCOLOR)
+    screen.blit(dojo_image,dojo_rect)
     all_sprites.draw(screen)
     # after drawing, flip the display
     pygame.display.flip()
