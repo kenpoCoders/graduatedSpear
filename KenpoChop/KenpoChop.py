@@ -78,11 +78,11 @@ class Pad(pygame.sprite.Sprite):
 class Chop(pygame.sprite.Sprite):
     def __init__(self, x, y, t):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(wheel_kick_image,(30,30))
+        self.image = random.choice( attack_images )
         self.rect = self.image.get_rect()
         self.rect.bottom = t
         self.rect.centerx = x
-        self.speedy = -10
+        self.speedy = -3
 
     def update(self):
         self.rect.y += self.speedy
@@ -98,7 +98,12 @@ clock = pygame.time.Clock()
 
 player_image = pygame.image.load(path.join(img_dir, 'playerBoy1.png')).convert_alpha()
 badguy_image = pygame.image.load(path.join(img_dir, 'kenpoPlayerRectangle.png')).convert_alpha()
-wheel_kick_image = pygame.image.load(path.join(img_dir, 'wheelKick.png')).convert_alpha()
+
+attack_images = []
+attack_images.append( pygame.image.load(path.join(img_dir, 'wheelKick1.png')).convert_alpha() )
+attack_images.append( pygame.image.load(path.join(img_dir, 'hammerFist.png')).convert_alpha() )
+attack_images.append( pygame.image.load(path.join(img_dir, 'sparklyUnicornKick.png')).convert_alpha() )
+
 dojo_image = pygame.image.load(path.join(img_dir, 'dojoFloorTextured.png')).convert_alpha()
 dojo_rect = dojo_image.get_rect()
 
