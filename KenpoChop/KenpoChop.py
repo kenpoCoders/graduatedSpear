@@ -46,10 +46,10 @@ class Player(pygame.sprite.Sprite):
         if self.rect.left < (SIDEPAD):
             self.rect.left = SIDEPAD
 
-    def chop(self):
-      chop = Chop(self.rect.centerx,self.rect.centery,self.rect.top)
-      all_sprites.add(chop)
-      attacks.add(chop)
+    def attack(self):
+      attack = Attack(self.rect.centerx,self.rect.centery,self.rect.top)
+      all_sprites.add(attack)
+      attacks.add(attack)
     
 
 class Pad(pygame.sprite.Sprite):
@@ -75,7 +75,7 @@ class Pad(pygame.sprite.Sprite):
           self.speedy = -3
         self.rect.y -= 20
 
-class Chop(pygame.sprite.Sprite):
+class Attack(pygame.sprite.Sprite):
     def __init__(self, x, y, t):
         pygame.sprite.Sprite.__init__(self)
         self.image = random.choice( attack_images )
@@ -129,7 +129,7 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.chop()
+                player.attack()
 
     ##### Game logic goes here  #########
     all_sprites.update()
