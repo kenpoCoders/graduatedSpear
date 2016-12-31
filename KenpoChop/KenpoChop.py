@@ -19,6 +19,15 @@ FPS = 60
 TITLE = "Kenpo Chop"
 BGCOLOR = GREEN
 
+def draw_text(text, size, x, y):
+  # generic function to draw some text
+  font_name = pygame.font.match_font('arial')
+  font = pygame.font.Font(font_name, size)
+  text_surface = font.render(text, True, WHITE)
+  text_rect = text_surface.get_rect()
+  text_rect.midtop = (x,y)
+  screen.blit(text_surface,text_rect)
+
 ############ SPRITES  ############
 class Player(pygame.sprite.Sprite):
     # player sprite - moves left/right, shoots
@@ -64,10 +73,11 @@ class Opponent(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += self.speedy
-        if self.rect.top > HEIGHT + 10 or self.rect.y < -80:
-            self.rect.y = random.randrange(-80, -50)
-            self.rect.x = random.randrange(SIDEPAD, (WIDTH - SIDEPAD) - self.rect.width)
-            self.speedy = random.randrange(1, 6)
+        if self.rect.top > HEIGHT + 10: ## Fall off screen
+          self.rect.x = random.randrange(SIDEPAD, (WIDTH - SIDEPAD) - self.rect.width)
+          self.rect.y = random.randrange(-80, -50)
+        if self.rect.y < -80: ## Pushed off screen
+          self.kill()
 
     def hit(self):
         self.speedy -= 1
@@ -135,6 +145,7 @@ dojo_image = pygame.image.load(path.join(img_dir, 'dojoFloorTextured.png')).conv
 dojo_rect = dojo_image.get_rect()
 
 # set up new game
+score = 0
 all_sprites = pygame.sprite.Group()
 opponents = pygame.sprite.Group()
 attacks = pygame.sprite.Group()
@@ -145,6 +156,9 @@ all_sprites.add(player)
 opponent = Opponent()
 all_sprites.add(opponent)
 opponents.add(opponent)
+
+old_num_opponents = len(opponents)
+new_num_opponents = len(opponents)
 
 running = True
 while running:
@@ -165,6 +179,15 @@ while running:
     for opponentSprite, attackSprites in opponentHits.items():
       if len(attackSprites) != 0:
         opponentSprite.hit()
+    # score killed opponents
+    new_num_opponents = len(opponents)
+    if new_num_opponents < old_num_opponents:
+      score += ( old_num_opponents - new_num_opponents )
+    if new_num_opponents == 0:
+      opponent = Opponent()
+      all_sprites.add(opponent)
+      opponents.add(opponent)
+    old_num_opponents = len(opponents)
     # check if opponents hit player
     hits = pygame.sprite.spritecollide(player, opponents, False)
     if hits:
@@ -174,5 +197,7 @@ while running:
     screen.fill(BGCOLOR)
     screen.blit(dojo_image,dojo_rect)
     all_sprites.draw(screen)
+    score_text = str(score)
+    draw_text(score_text, 18, WIDTH / 2, 10 )
     # after drawing, flip the display
     pygame.display.flip()
