@@ -52,8 +52,8 @@ class Player(pygame.sprite.Sprite):
       attacks.add(attack)
     
 
-class Pad(pygame.sprite.Sprite):
-    # Kenpo Pad sprite - spawns above top and moves downward
+class Opponent(pygame.sprite.Sprite):
+    # Kenpo Opponent sprite - spawns above top and moves downward
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(badguy_image,(50,100))
@@ -109,15 +109,15 @@ dojo_rect = dojo_image.get_rect()
 
 # set up new game
 all_sprites = pygame.sprite.Group()
-pads = pygame.sprite.Group()
+opponents = pygame.sprite.Group()
 attacks = pygame.sprite.Group()
 
 player = Player()
 all_sprites.add(player)
 
-pad = Pad()
-all_sprites.add(pad)
-pads.add(pad)
+opponent = Opponent()
+all_sprites.add(opponent)
+opponents.add(opponent)
 
 running = True
 while running:
@@ -133,13 +133,13 @@ while running:
 
     ##### Game logic goes here  #########
     all_sprites.update()
-    # check if attacks hit pads
-    padHits = pygame.sprite.groupcollide(pads, attacks, False, True)
-    for padSprite, attackSprites in padHits.items():
+    # check if attacks hit opponents
+    opponentHits = pygame.sprite.groupcollide(opponents, attacks, False, True)
+    for opponentSprite, attackSprites in opponentHits.items():
       if len(attackSprites) != 0:
-        padSprite.hit()
-    # check if pads hit player
-    hits = pygame.sprite.spritecollide(player, pads, False)
+        opponentSprite.hit()
+    # check if opponents hit player
+    hits = pygame.sprite.spritecollide(player, opponents, False)
     if hits:
         running = False
 
