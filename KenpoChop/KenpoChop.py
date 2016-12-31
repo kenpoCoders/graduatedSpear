@@ -78,13 +78,33 @@ class Opponent(pygame.sprite.Sprite):
 class Attack(pygame.sprite.Sprite):
     def __init__(self, x, y, t):
         pygame.sprite.Sprite.__init__(self)
-        self.image = random.choice( attack_images )
+        (self.image0,self.hasRotation, self.rotationSpeeds) = random.choice( attack_pydata )
+        self.image = self.image0.copy()
         self.rect = self.image.get_rect()
         self.rect.bottom = t
         self.rect.centerx = x
         self.speedy = -3
+        self.rot = 0
+        self.rot_speed = 0
+        if self.hasRotation:
+          self.rot_speed = random.choice(self.rotationSpeeds)
+        self.last_update = pygame.time.get_ticks()
+
+    def rotate(self):
+      if self.hasRotation:
+        now = pygame.time.get_ticks()
+        ticks_since_update = now - self.last_update
+        if ticks_since_update > 50:
+          self.last_update = now
+          self.rot = (self.rot + self.rot_speed ) % 360
+          new_image = pygame.transform.rotate(self.image0,self.rot)
+          old_center = self.rect.center
+          self.image = new_image
+          self.rect = self.image.get_rect()
+          self.rect.center = old_center
 
     def update(self):
+        self.rotate()
         self.rect.y += self.speedy
         # kill if off top of screen
         if self.rect.bottom < 0:
@@ -99,10 +119,17 @@ clock = pygame.time.Clock()
 player_image = pygame.image.load(path.join(img_dir, 'playerBoy1.png')).convert_alpha()
 badguy_image = pygame.image.load(path.join(img_dir, 'kenpoPlayerRectangle.png')).convert_alpha()
 
-attack_images = []
-attack_images.append( pygame.image.load(path.join(img_dir, 'wheelKick1.png')).convert_alpha() )
-attack_images.append( pygame.image.load(path.join(img_dir, 'hammerFist.png')).convert_alpha() )
-attack_images.append( pygame.image.load(path.join(img_dir, 'sparklyUnicornKick.png')).convert_alpha() )
+
+attack_images = [] ## (                fileName, rotateAttack, [rotationSpeeds])
+attack_images.append( (        'wheelKick1.png',         True,           [-8,8]) )
+attack_images.append( (        'hammerFist.png',        False,               []) )
+attack_images.append( ('sparklyUnicornKick.png',        False,               []) )
+
+attack_pydata = []
+for (fileName, rotateAttack, rotateSpeeds) in attack_images:
+  attack_pydata.append( (pygame.image.load(path.join(img_dir,fileName)).convert_alpha(), 
+                                                                           rotateAttack, 
+                                                                           rotateSpeeds) )
 
 dojo_image = pygame.image.load(path.join(img_dir, 'dojoFloorTextured.png')).convert_alpha()
 dojo_rect = dojo_image.get_rect()
