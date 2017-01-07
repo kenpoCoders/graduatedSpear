@@ -3,6 +3,7 @@ import random
 from os import path
 
 img_dir = path.join(path.dirname(__file__),'img')
+snd_dir = path.join(path.dirname(__file__),'snd')
 
 # Colors (R, G, B)
 WHITE = (255, 255, 255)
@@ -84,11 +85,13 @@ class Opponent(pygame.sprite.Sprite):
         if self.speedy < -3:
           self.speedy = -3
         self.rect.y -= 20
+        uff_sound.play()
 
 class Attack(pygame.sprite.Sprite):
     def __init__(self, x, y, t):
         pygame.sprite.Sprite.__init__(self)
-        (self.image0,self.hasRotation, self.rotationSpeeds) = random.choice( attack_pydata )
+        (self.image0,self.hasRotation, self.rotationSpeeds,self.sound) = random.choice( attacks_pydata )
+        self.sound.play()
         self.image = self.image0.copy()
         self.rect = self.image.get_rect()
         self.rect.bottom = t
@@ -122,6 +125,7 @@ class Attack(pygame.sprite.Sprite):
 
 # initialize pygame
 pygame.init()
+pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
@@ -130,19 +134,24 @@ player_image = pygame.image.load(path.join(img_dir, 'playerBoy1.png')).convert_a
 badguy_image = pygame.image.load(path.join(img_dir, 'kenpoPlayerRectangle.png')).convert_alpha()
 
 
-attack_images = [] ## (                fileName, rotateAttack, [rotationSpeeds])
-attack_images.append( (        'wheelKick1.png',         True,           [-8,8]) )
-attack_images.append( (        'hammerFist.png',        False,               []) )
-attack_images.append( ('sparklyUnicornKick.png',        False,               []) )
+attacks = [] ## (               imageFile, rotateAttack, [rotationSpeeds],     soundFile)
+attacks.append( (        'wheelKick1.png',         True,           [-8,8], 'LukeKia.wav') )
+attacks.append( (        'hammerFist.png',        False,               [], 'EvieKia.wav') )
+attacks.append( ('sparklyUnicornKick.png',        False,               [],  'MomKia.wav') )
 
-attack_pydata = []
-for (fileName, rotateAttack, rotateSpeeds) in attack_images:
-  attack_pydata.append( (pygame.image.load(path.join(img_dir,fileName)).convert_alpha(), 
-                                                                           rotateAttack, 
-                                                                           rotateSpeeds) )
+attacks_pydata = []
+for ( imgFile, rotateAttack, rotateSpeeds, sndFile ) in attacks:
+  attacks_pydata.append( (pygame.image.load(path.join(img_dir,imgFile)).convert_alpha(), 
+                          rotateAttack, 
+                          rotateSpeeds,
+                          pygame.mixer.Sound(path.join(snd_dir,sndFile)) ) )
 
 dojo_image = pygame.image.load(path.join(img_dir, 'dojoFloorTextured.png')).convert_alpha()
 dojo_rect = dojo_image.get_rect()
+
+## Sounds
+uff_sound = pygame.mixer.Sound(path.join(snd_dir,'Uff.wav'))
+
 
 # set up new game
 score = 0
