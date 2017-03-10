@@ -29,7 +29,20 @@ def draw_text(text, size, x, y):
   text_rect.midtop = (x,y)
   screen.blit(text_surface,text_rect)
 
-############ SPRITES  ############
+def draw_health_bar(x, y, pct):
+  if pct < 0:
+    pct = 0
+  BAR_LENGTH = 100
+  BAR_HEIGHT = 10
+  fill = (pct / 100.0) * BAR_LENGTH
+  outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+  fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
+  pygame.draw.rect(screen, GREEN, fill_rect)
+  pygame.draw.rect(screen, WHITE, outline_rect, 2)
+  
+  
+
+############ SPRITES  #############
 class Player(pygame.sprite.Sprite):
     # player sprite - moves left/right, shoots
     def __init__(self):
@@ -39,6 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
         self.speedx = 0
+        self.health = 100
 
     def update(self):
         # only move if arrow key is pressed
@@ -162,6 +176,7 @@ attacks = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
+
 opponent = Opponent()
 all_sprites.add(opponent)
 opponents.add(opponent)
@@ -199,7 +214,10 @@ while running:
     old_num_opponents = len(opponents)
     # check if opponents hit player
     hits = pygame.sprite.spritecollide(player, opponents, False)
-    if hits:
+    for opponent in hits:
+      player.health -= 20
+      opponent.kill()
+      if player.health <= 0:
         running = False
 
     ##### Draw/update screen #########
@@ -208,5 +226,6 @@ while running:
     all_sprites.draw(screen)
     score_text = str(score)
     draw_text(score_text, 18, WIDTH / 2, 10 )
+    draw_health_bar(5, 5, player.health)
     # after drawing, flip the display
     pygame.display.flip()
