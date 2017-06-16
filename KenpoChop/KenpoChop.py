@@ -92,10 +92,15 @@ class Opponent(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(SIDEPAD, (WIDTH - SIDEPAD) - self.rect.width)
         self.rect.y = random.randrange(-80, -50)
+        self.speedx = random.randrange(-3, 3)
         self.speedy = random.randrange(1, 6)
 
     def update(self):
         self.rect.y += self.speedy
+        self.rect.x += self.speedx
+        if self.rect.left < SIDEPAD or self.rect.right > (WIDTH - SIDEPAD): ## On side of Deck
+          self.speedx *= -1
+          self.rect.x += self.speedx
         if self.rect.top > HEIGHT + 10: ## Fall off screen
           self.rect.x = random.randrange(SIDEPAD, (WIDTH - SIDEPAD) - self.rect.width)
           self.rect.y = random.randrange(-80, -50)
