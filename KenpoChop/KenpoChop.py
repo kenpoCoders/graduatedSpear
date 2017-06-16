@@ -53,6 +53,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = HEIGHT - 10
         self.speedx = 0
         self.health = 100
+        self.attack_delay = 250
+        self.last_attack = pygame.time.get_ticks()
 
     def update(self):
         # only move if arrow key is pressed
@@ -62,6 +64,8 @@ class Player(pygame.sprite.Sprite):
             self.speedx = -5
         if keystate[pygame.K_RIGHT]:
             self.speedx = 5
+        if keystate[pygame.K_SPACE]:
+            self.attack()
         # move the sprite
         self.rect.x += self.speedx
         # stop at the edges
@@ -71,9 +75,13 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = SIDEPAD
 
     def attack(self):
-      attack = Attack(self.rect.centerx,self.rect.centery,self.rect.top)
-      all_sprites.add(attack)
-      attacks.add(attack)
+      now = pygame.time.get_ticks()
+      delay = now - self.last_attack
+      if delay > self.attack_delay:
+        self.last_attack = now
+        attack = Attack(self.rect.centerx,self.rect.centery,self.rect.top)
+        all_sprites.add(attack)
+        attacks.add(attack)
     
 
 class Opponent(pygame.sprite.Sprite):
@@ -192,9 +200,6 @@ while running:
         # this one checks for the window being closed
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player.attack()
 
     ##### Game logic goes here  #########
     all_sprites.update()
