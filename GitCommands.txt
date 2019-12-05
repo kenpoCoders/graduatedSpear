@@ -1,0 +1,10 @@
+Edit files.
+
+git stage fileName
+
+git commit
+
+git push
+
+git pull --rebase
+
