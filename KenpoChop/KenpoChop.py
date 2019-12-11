@@ -14,7 +14,7 @@ YELLOW = (255, 255, 0)
 
 # Settings
 WIDTH = 480
-HEIGHT = 640
+HEIGHT = 550
 SIDEPAD = 20
 FPS = 60
 TITLE = "Kenpo Chop"
