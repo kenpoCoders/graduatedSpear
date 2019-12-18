@@ -139,10 +139,8 @@ def playGame():
   for i in range(4):
     HoL = True
     if aiVar.get() == "computer":
-      HoL = computerAI_pickv2( deck_of_cards[last_card], exposed_cards )
+      HoL = computerAI_pickv2( deck_of_cards[last_card][0], exposed_cards )
     else:
-      print (numCardsLessThanEqual)
-      print (numCardsGreaterThanEqual)
       HoL = tkinter.messagebox.askyesno(title="High or Low",message="Is the next card going to be higher?")
     revealCard( new_card, deck_of_cards[new_card] )
     exposed_cards.append( deck_of_cards[last_card] )
