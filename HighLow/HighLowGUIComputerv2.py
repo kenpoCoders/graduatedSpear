@@ -44,7 +44,7 @@ def revealCard(slot,card):
   cards[slot].configure( image = cardImage )
   cards[slot].image = cardImage
   root.update()
-  time.sleep(0.3)
+  ##time.sleep(0.3)
 
 def resetCards():
   cardFile = "./cards/card_back.png"
@@ -53,7 +53,7 @@ def resetCards():
     cards[slot].configure( image = cardImage )
     cards[slot].image = cardImage
   root.update()
-  time.sleep(0.3)
+  ##time.sleep(0.3)
 
 def updateScore():
   global wins
@@ -65,7 +65,7 @@ def updateScore():
   loseLabel.configure( text = loseStr )
   loseLabel.text = loseStr
   root.update()
-  time.sleep(0.3)
+  ##time.sleep(0.3)
 
 def checkButtonClick():
   global noMessage
@@ -82,7 +82,7 @@ def checkButtonClick():
         noMessage = False
       playGame()
       root.update()
-      time.sleep(1)
+      ##time.sleep(1)
 
 def numCardsLessThanEqual( faceName, exposed_cards ):
   num = 0
@@ -110,13 +110,20 @@ def computerAI_pick( last_card, exposed_cards ):
     return False
 
 def computerAI_pickv2( faceName, exposed_cards ):
-  if numCardsGreaterThanEqual(faceName, exposed_cards) == numCardsLessThanEqual(faceName, exposed_cards):
-    return random.choice( (True,False) ) 
-  elif numCardsGreaterThanEqual(faceName, exposed_cards) >= numCardsLessThanEqual(faceName, exposed_cards):
+  faces =     [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace" ]
+  numCardsAbove = [ 48,   44,  40,  36,  32,  28,  24,  20,   16,     12,      8,      4,     0 ]
+  numCardsBelow =  [  0,    4,   8,  12,  16,  20,  24,  28,   32,     36,     40,     44,    48 ]
+  faceIndex = faces.index(faceName)
+  tiesForAbove = numCardsLessThanEqual(faceName,exposed_cards)
+  tiesForBelow = numCardsGreaterThanEqual(faceName,exposed_cards)
+  numAbove = numCardsAbove[faceIndex] + tiesForAbove
+  numBelow = numCardsBelow[faceIndex] + tiesForBelow
+  if numAbove > numBelow:
+    return True
+  elif  numBelow > numAbove:
     return False
   else:
-    return True
-  
+    return random.choice( (True,False) )
   
 def playGame():
   global wins
@@ -140,10 +147,14 @@ def playGame():
     HoL = True
     if aiVar.get() == "computer":
       HoL = computerAI_pickv2( deck_of_cards[last_card][0], exposed_cards )
+      ##print ("last card = ", last_card)
+      ##print ("Picked High = ", HoL)
     else:
       HoL = tkinter.messagebox.askyesno(title="High or Low",message="Is the next card going to be higher?")
-    revealCard( new_card, deck_of_cards[new_card] )
-    exposed_cards.append( deck_of_cards[last_card] )
+    if aiVar.get() != "computer":
+      revealCard( new_card, deck_of_cards[new_card] )
+    exposed_cards.append( deck_of_cards[new_card] )
+    ##print ("Card is",deck_of_cards[new_card])
     if not goodPick( deck_of_cards[last_card], deck_of_cards[new_card], HoL ):
       msg = "You Lose!"
       loses += 1
